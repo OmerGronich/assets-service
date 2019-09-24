@@ -1,0 +1,27 @@
+{
+  "name": "assets-service",
+  "version": "1.0.0",
+  "description": "manage assets like images and static files on remote servers",
+  "keywords": [
+    "express",
+    "mongoose",
+    "es6"
+  ],
+  "engines": {
+    "npm": ">=5",
+    "node": ">=10.5"
+  },
+  "scripts": {
+    "start": "node --use_strict index.js"
+  },
+  "author": "David Meir-Levy",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.4",
+    "express": "^4.15.3",
+    "mongoose": "^4.10.4",
+    "axios": "^0.19.0",
+    "morgan": "^1.9.0"
+  }
+}
