@@ -1,16 +1,11 @@
-# Authentication service
+# Assets service
 
-A HTTP server (back end only) with DB support & auth features 
+A HTTP server to manage static assets on several assets providers
 
 ## Main Features
 - es6
 - express
 - mongoose
-- passport
-- validator
-- signin / signup
-- token and refresh-tokens
-- optional roles by environment variables
 
 ## Dependencies
 - Node.js
@@ -26,8 +21,3 @@ $ npm install
 ```sh
 $ npm start
 ```
-
-
-## Future development
-- email verification
-- reset password
