@@ -1,6 +1,7 @@
 function routes (app) {
   const authCheck = require('../middleware/auth-check')
   const editorCheck = require('../middleware/editor-check')
+  const { createStorage, getStorageList } = require('./storage')
 
   app.use(authCheck, editorCheck)
 
@@ -9,8 +10,8 @@ function routes (app) {
   }
 
   app
-    .get('/api/assets', empty)
-    .post('/api/assets', empty)
+    .get('/api/assets', getStorageList)
+    .post('/api/assets', createStorage)
     .put('/api/assets/:storageId', empty)
     .delete('/api/assets/:storageId', empty)
     .get('/api/assets/:storageId', empty)

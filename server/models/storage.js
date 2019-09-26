@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const config = require('../../config')
 
 // define the Storage model schema
 const StorageSchema = new mongoose.Schema({
@@ -12,8 +11,7 @@ const StorageSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  authentication: String,
-  salt: String
+  authentication: String
 })
 
-module.exports = mongoose.model('Storage', StorageSchema)
+module.exports = mongoose.model('StorageList.vue', StorageSchema)
