@@ -5,7 +5,7 @@ function callSecretsService (url, key, value) {
   return callInternalService(SERVICES.secrets, {
     headers: { internal_secret: internalServicesSecret },
     method: 'POST',
-    body: {
+    data: {
       key,
       value,
       token: secretsToken
