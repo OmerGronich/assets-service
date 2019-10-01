@@ -11,6 +11,10 @@ const StorageSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  metadata: {
+    publicUrl: String,
+    basePath: String
+  },
   authentication: String
 })
 

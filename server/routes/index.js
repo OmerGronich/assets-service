@@ -1,7 +1,7 @@
 function routes (app) {
   const authCheck = require('../middleware/auth-check')
   const editorCheck = require('../middleware/editor-check')
-  const { createStorage, getStorageList } = require('./storage')
+  const { getStorageById, createStorage, getStorageList, removeStorage, updateStorage } = require('./storage')
 
   app.use(authCheck, editorCheck)
 
@@ -12,12 +12,12 @@ function routes (app) {
   app
     .get('/api/assets', getStorageList)
     .post('/api/assets', createStorage)
-    .put('/api/assets/:storageId', empty)
-    .delete('/api/assets/:storageId', empty)
-    .get('/api/assets/:storageId', empty)
-    .post('/api/assets/:storageId', empty)
-    .put('/api/assets/:storageId/:assetId', empty)
-    .delete('/api/assets/:storageId/:assetId', empty)
+    .put('/api/assets/:storageId', getStorageById, updateStorage)
+    .delete('/api/assets/:storageId', getStorageById, removeStorage)
+    .get('/api/assets/:storageId', getStorageById, empty)
+    .post('/api/assets/:storageId', getStorageById, empty)
+    .put('/api/assets/:storageId/:assetId', getStorageById, empty)
+    .delete('/api/assets/:storageId/:assetId', getStorageById, empty)
 }
 
 module.exports = routes
