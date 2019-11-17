@@ -1,4 +1,4 @@
-const Storage = require('mongoose').model('StorageList.vue')
+const Storage = require('mongoose').model('Storage')
 const uniqid = require('uniqid')
 const { setSecret } = require('../../helpers/secrets-management')
 

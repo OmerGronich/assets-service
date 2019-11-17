@@ -2,6 +2,7 @@ function routes (app) {
   const authCheck = require('../middleware/auth-check')
   const editorCheck = require('../middleware/editor-check')
   const { getStorageById, createStorage, getStorageList, removeStorage, updateStorage } = require('./storage')
+  const { getStorageAssets } = require('./assets')
 
   app.use(authCheck, editorCheck)
 
@@ -14,7 +15,7 @@ function routes (app) {
     .post('/api/assets', createStorage)
     .put('/api/assets/:storageId', getStorageById, updateStorage)
     .delete('/api/assets/:storageId', getStorageById, removeStorage)
-    .get('/api/assets/:storageId', getStorageById, empty)
+    .get('/api/assets/:storageId', getStorageById, getStorageAssets)
     .post('/api/assets/:storageId', getStorageById, empty)
     .put('/api/assets/:storageId/:assetId', getStorageById, empty)
     .delete('/api/assets/:storageId/:assetId', getStorageById, empty)

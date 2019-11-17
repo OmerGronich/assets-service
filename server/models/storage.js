@@ -18,4 +18,4 @@ const StorageSchema = new mongoose.Schema({
   authentication: String
 })
 
-module.exports = mongoose.model('StorageList.vue', StorageSchema)
+module.exports = mongoose.model('Storage', StorageSchema)
