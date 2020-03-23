@@ -1,8 +1,8 @@
 function routes (app) {
   const authCheck = require('../middleware/auth-check')
   const editorCheck = require('../middleware/editor-check')
-  const { getStorageById, createStorage, getStorageList, removeStorage, updateStorage } = require('./storage')
-  const { getStorageAssets } = require('./assets')
+  const { getStorageById, createStorage, getStorageList, removeStorage, updateStorage, getStorage } = require('./storage')
+  const { getStorageAssets, removeStorageAsset } = require('./assets')
 
   app.use(authCheck, editorCheck)
 
@@ -11,14 +11,18 @@ function routes (app) {
   }
 
   app
-    .get('/api/assets', getStorageList)
-    .post('/api/assets', createStorage)
-    .put('/api/assets/:storageId', getStorageById, updateStorage)
-    .delete('/api/assets/:storageId', getStorageById, removeStorage)
     .get('/api/assets/:storageId', getStorageById, getStorageAssets)
     .post('/api/assets/:storageId', getStorageById, empty)
-    .put('/api/assets/:storageId/:assetId', getStorageById, empty)
-    .delete('/api/assets/:storageId/:assetId', getStorageById, empty)
+    .put('/api/assets/:storageId', getStorageById, empty)
+    .delete('/api/assets/:storageId', getStorageById, removeStorageAsset)
+
+  app
+    .get('/api/storage', getStorageList)
+    .post('/api/storage', createStorage)
+    .get('/api/storage/:storageId', getStorageById, getStorage)
+    .put('/api/storage/:storageId', getStorageById, updateStorage)
+    .delete('/api/storage/:storageId', getStorageById, removeStorage)
+
 }
 
 module.exports = routes
