@@ -13,7 +13,7 @@ function routes (app) {
   app
     .get('/api/assets/:storageId', getStorageById, getStorageAssets)
     .post('/api/assets/:storageId', getStorageById, empty)
-    .put('/api/assets/:storageId', getStorageById, empty)
+    .put('/api/assets/:storageId', getStorageById, empty) // update metadata, not the actual asset buffer
     .delete('/api/assets/:storageId', getStorageById, removeStorageAsset)
 
   app
