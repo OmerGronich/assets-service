@@ -26,7 +26,9 @@ async function uploadFile (storage, identifier, file) {
   // TODO: reuse storage connection
   ftp.destroy()
 
-  return { success: true }
+  const publicUrl = new URL(identifier, storage.metadata.publicUrl)
+
+  return { success: true, publicUrl }
 }
 
 async function removeFile (storage, identifier) {

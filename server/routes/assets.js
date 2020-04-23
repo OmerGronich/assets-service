@@ -21,7 +21,10 @@ function uploadStorageAssets (req, res) {
   if (kind === 'ftp') {
     return uploadFile(req.storage, identifier, file)
       .then((result) => res.status(200).jsonp(result).end())
-      .catch((err) => res.status(500).jsonp(err).end())
+      .catch((err) => {
+        console.log('err', err)
+        res.status(500).jsonp(err).end()
+      })
   } else {
     return res.end()
   }
