@@ -31,6 +31,17 @@ class Ftp {
     })
   }
 
+  upload (path, file) {
+    return new Promise((resolve, reject) => {
+      this._client.append(file, path, false, (err) => {
+        if (err) {
+          return reject({ message: 'could not upload asset to storage: ' + this.name })
+        }
+        resolve()
+      })
+    })
+  }
+
   remove (path) {
     const pathArr = path.split('/')
     const currentItemToRemove = pathArr[pathArr.length - 1]

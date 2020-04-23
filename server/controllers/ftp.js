@@ -1,9 +1,9 @@
 const path = require('path')
 const Ftp = require('../models/ftp')
 
-async function loadFiles (storage, identifier) {
+async function loadFiles (storage, identifier = '/') {
   const ftp = new Ftp(storage)
-  const fullPath = path.join(storage.metadata.basePath || '/', identifier || '/')
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier)
 
   await ftp.ready
   const list = await ftp.list(fullPath)
@@ -15,12 +15,23 @@ async function loadFiles (storage, identifier) {
   return list
 }
 
-async function removeFile (storage, identifier) {
-  if (!identifier) {
-    throw new Error('Must supply asset identifier to remove')
-  }
+async function uploadFile (storage, identifier, file) {
   const ftp = new Ftp(storage)
-  const fullPath = path.join(storage.metadata.basePath || '/', identifier);
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier)
+
+  await ftp.ready
+  await ftp.upload(fullPath, file)
+
+  // run on background
+  // TODO: reuse storage connection
+  ftp.destroy()
+
+  return { success: true }
+}
+
+async function removeFile (storage, identifier) {
+  const ftp = new Ftp(storage)
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier)
 
   await ftp.ready
   await ftp.remove(fullPath)
@@ -34,5 +45,6 @@ async function removeFile (storage, identifier) {
 
 module.exports = {
   loadFiles,
-  removeFile
+  removeFile,
+  uploadFile
 }

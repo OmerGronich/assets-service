@@ -1,8 +1,9 @@
 function routes (app) {
   const authCheck = require('../middleware/auth-check')
   const editorCheck = require('../middleware/editor-check')
+  const upload = require('multer')()
   const { getStorageById, createStorage, getStorageList, removeStorage, updateStorage, getStorage } = require('./storage')
-  const { getStorageAssets, removeStorageAsset } = require('./assets')
+  const { getStorageAssets, removeStorageAsset, verifyIdentifier, uploadStorageAssets } = require('./assets')
 
   app.use(authCheck, editorCheck)
 
@@ -12,9 +13,9 @@ function routes (app) {
 
   app
     .get('/api/assets/:storageId', getStorageById, getStorageAssets)
-    .post('/api/assets/:storageId', getStorageById, empty)
+    .post('/api/assets/:storageId', getStorageById, verifyIdentifier, upload.any(), uploadStorageAssets)
     .put('/api/assets/:storageId', getStorageById, empty) // update metadata, not the actual asset buffer
-    .delete('/api/assets/:storageId', getStorageById, removeStorageAsset)
+    .delete('/api/assets/:storageId', getStorageById, verifyIdentifier, removeStorageAsset)
 
   app
     .get('/api/storage', getStorageList)
