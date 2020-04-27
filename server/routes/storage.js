@@ -7,13 +7,15 @@ function createStorage (req, res) {
   const storage = new Storage({
     name: body.name,
     kind: body.kind,
+    metadata: body.metadata,
     authentication: uniqid()
   })
 
   return setSecret(storage.authentication, body.authentication)
     .then(() => storage.save())
-    .then(() => {
+    .then((storage) => {
       return res.status(200).jsonp({
+        _id: storage._id,
         name: storage.name,
         kind: storage.kind,
         metadata: storage.metadata
