@@ -1,9 +1,9 @@
 const { internalServicesSecret, secretsToken } = require('../config')
 const { callInternalService, SERVICES } = require('./internal-service')
 
-function callSecretsService (url, key, value) {
+function callSecretsService (url, tenant, key, value) {
   return callInternalService(SERVICES.secrets, {
-    headers: { internal_secret: internalServicesSecret },
+    headers: { internal_secret: internalServicesSecret, tenant },
     method: 'POST',
     data: {
       key,
@@ -15,12 +15,12 @@ function callSecretsService (url, key, value) {
     .then(axiosRes => axiosRes.data)
 }
 
-function getSecret (key) {
-  return callSecretsService('/api/secrets/get', key)
+function getSecret (tenant, key) {
+  return callSecretsService('/api/secrets/get', tenant, key)
 }
 
-function setSecret (key, value) {
-  return callSecretsService('/api/secrets/set', key, value)
+function setSecret (tenant, key, value) {
+  return callSecretsService('/api/secrets/set', tenant, key, value)
 }
 
 module.exports = { getSecret, setSecret }

@@ -5,13 +5,14 @@ const { setSecret } = require('../../helpers/secrets-management')
 function createStorage (req, res) {
   const body = req.body || {}
   const storage = new Storage({
+    tenant: req.headers.tenant,
     name: body.name,
     kind: body.kind,
     metadata: body.metadata,
     authentication: uniqid()
   })
 
-  return setSecret(storage.authentication, body.authentication)
+  return setSecret(storage.tenant, storage.authentication, body.authentication)
     .then(() => storage.save())
     .then((storage) => {
       return res.status(200).jsonp({
@@ -25,7 +26,7 @@ function createStorage (req, res) {
 }
 
 function getStorageList (req, res) {
-  return Storage.find({})
+  return Storage.find({ tenant: req.headers.tenant })
     .select('kind name metadata')
     .lean()
     .then(list => {
@@ -51,7 +52,7 @@ function updateStorage (req, res) {
   }
   if ((body.kind && body.kind !== req.storage.kind) || body.authentication) {
     req.storage.kind = body.kind || req.storage.kind
-    promise = setSecret(req.storage.authentication, body.authentication)
+    promise = setSecret(req.storage.tenant, req.storage.authentication, body.authentication)
   }
   if (body.metadata) {
     req.storage.metadata = body.metadata
@@ -67,7 +68,7 @@ function updateStorage (req, res) {
 }
 
 function getStorageById (req, res, next) {
-  return Storage.findById(req.params.storageId)
+  return Storage.findOne({ _id: req.params.storageId, tenant: req.headers.tenant })
     .then(storage => {
       req.storage = storage
       next()

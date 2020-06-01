@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 
 // define the Storage model schema
 const StorageSchema = new mongoose.Schema({
+  tenant: {
+    type: String,
+    index: true,
+    default: '0'
+  },
   kind: {
     type: String,
     enum: ['s3', 'gcloud', 'ftp'],

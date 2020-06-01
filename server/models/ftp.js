@@ -4,7 +4,7 @@ const { getSecret } = require('../../helpers/secrets-management')
 class Ftp {
   constructor (storage) {
     this.name = storage.name
-    this.ready = getSecret(storage.authentication)
+    this.ready = getSecret(storage.tenant, storage.authentication)
       .then(decrypted => {
         const auth = decrypted.value
         this._client = new Client()
