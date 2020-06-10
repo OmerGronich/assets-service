@@ -15,7 +15,7 @@ function createStorage (req, res) {
   return setSecret(storage.tenant, storage.authentication, body.authentication)
     .then(() => storage.save())
     .then((storage) => {
-      return res.status(200).jsonp({
+      return res.status(200).json({
         _id: storage._id,
         name: storage.name,
         kind: storage.kind,
@@ -40,8 +40,8 @@ function getStorageList (req, res) {
 
 function removeStorage (req, res) {
   req.storage.remove()
-    .then(() => res.status(200).jsonp({}).end())
-    .catch(() => res.status(400).jsonp({ message: 'failed to remove storage' }).end())
+    .then(() => res.status(200).json({}).end())
+    .catch(() => res.status(400).json({ message: 'failed to remove storage' }).end())
 }
 
 function updateStorage (req, res) {
@@ -59,12 +59,12 @@ function updateStorage (req, res) {
   }
   promise
     .then(() => req.storage.save())
-    .then(() => res.status(200).jsonp({
+    .then(() => res.status(200).json({
       name: req.storage.name,
       kind: req.storage.kind,
       metadata: req.storage.metadata
     }).end())
-    .catch(() => res.status(400).jsonp({ message: 'failed to update storage' }).end())
+    .catch(() => res.status(400).json({ message: 'failed to update storage' }).end())
 }
 
 function getStorageById (req, res, next) {
@@ -73,12 +73,12 @@ function getStorageById (req, res, next) {
       req.storage = storage
       next()
     })
-    .catch(() => res.status(404).jsonp({ message: 'could not find storage' }).end())
+    .catch(() => res.status(404).json({ message: 'could not find storage' }).end())
 }
 
 function getStorage (req, res) {
   const { _id, name, kind, metadata } = req.storage
-  res.status(200).jsonp({ _id, name, kind, metadata }).end()
+  res.status(200).json({ _id, name, kind, metadata }).end()
 }
 
 module.exports = { createStorage, getStorageList, removeStorage, getStorageById, updateStorage, getStorage }
