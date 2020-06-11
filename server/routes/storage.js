@@ -1,4 +1,4 @@
-const Storage = require('mongoose').model('Storage')
+const Storage = require('../models/storage')
 const uniqid = require('uniqid')
 const { setSecret } = require('../../helpers/secrets-management')
 
@@ -22,7 +22,9 @@ function createStorage (req, res) {
         metadata: storage.metadata
       }).end()
     })
-    .catch(() => res.status(400).jsonp({ message: 'storage creation failed' }).end())
+    .catch((err) => {
+      res.status(400).json({ message: 'storage creation failed' }).end()
+    })
 }
 
 function getStorageList (req, res) {
@@ -35,7 +37,7 @@ function getStorageList (req, res) {
       }
       return res.status(200).jsonp(list).end()
     })
-    .catch(() => res.status(400).jsonp({ message: 'error loading storage list' }).end())
+    .catch(() => res.status(400).json({ message: 'error loading storage list' }).end())
 }
 
 function removeStorage (req, res) {

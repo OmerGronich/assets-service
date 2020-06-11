@@ -5,7 +5,7 @@ const StorageSchema = new mongoose.Schema({
   tenant: {
     type: String,
     index: true,
-    default: '0'
+    required: true,
   },
   kind: {
     type: String,

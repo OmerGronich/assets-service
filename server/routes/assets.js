@@ -22,7 +22,6 @@ function uploadStorageAssets (req, res) {
     return uploadFile(req.storage, identifier, file)
       .then((result) => res.status(200).jsonp(result).end())
       .catch((err) => {
-        console.log('err', err)
         res.status(500).jsonp(err).end()
       })
   } else {
