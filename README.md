@@ -26,7 +26,6 @@ $ npx greenpress-assets
 ## Development and Independent Usage
 In case you would like to run this project manually, for any reason, there are several commands you need to acknowledge:
 
-
 ### Install
 ```sh
 $ npm install
