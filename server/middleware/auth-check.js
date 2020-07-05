@@ -1,4 +1,4 @@
-const callAuthService = require('../../helpers/call-auth-service')
+const authService = require('@greenpress/api-kit/internal-service').service('AUTH')
 
 /**
  *  The Auth Checker middleware function.
@@ -8,13 +8,14 @@ module.exports = (req, res, next) => {
     return res.status(401).end()
   }
 
-  return callAuthService('/api/me', {
+  return authService({
+    url: '/api/me',
     headers: {
       authorization: req.headers.authorization,
     }
   })
-    .then(user => {
-      req.user = user
+    .then(res => {
+      req.user = res.data
       return next()
     })
     .catch(() => {

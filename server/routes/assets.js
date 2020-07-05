@@ -1,55 +1,14 @@
-const { loadFiles, removeFile, uploadFile } = require('../controllers/ftp')
+const app = require('@greenpress/api-kit').app()
+const upload = require('multer')()
+const { getStorageById } = require('../controllers/storage')
+const { getStorageAssets, removeStorageAsset, verifyIdentifier, uploadStorageAssets } = require('../controllers/assets')
 
-function getStorageAssets (req, res) {
-  const kind = req.storage.kind
-  const identifier = req.query.identifier
-
-  if (kind === 'ftp') {
-    return loadFiles(req.storage, identifier)
-      .then(list => res.json(list).end())
-      .catch(() => res.status(500).json({ message: 'could not get assets' }).end())
-  } else {
-    return res.end()
-  }
+function empty (_, res) {
+  return res.status(200).json({ message: 'endpoint not yet exists' }).end()
 }
 
-function uploadStorageAssets (req, res) {
-  const kind = req.storage.kind
-  const identifier = req.query.identifier
-  const file = req.files[0].buffer
-
-  if (kind === 'ftp') {
-    return uploadFile(req.storage, identifier, file)
-      .then((result) => res.status(200).json(result).end())
-      .catch(() => {
-        res.status(500).json({ message: 'cloud not upload asset'}).end()
-      })
-  } else {
-    return res.end()
-  }
-}
-
-function removeStorageAsset (req, res) {
-  const kind = req.storage.kind
-  const identifier = req.query.identifier
-
-  if (kind === 'ftp') {
-    return removeFile(req.storage, identifier, req.body.file)
-      .then(() => res.end())
-      .catch(() => res.status(500).json({message: 'could not remove asset'}).end())
-  } else {
-    return res.end()
-  }
-}
-
-function verifyIdentifier (req, res, next) {
-  if (!req.query.identifier) {
-    return res
-      .status(500)
-      .json({ message: 'Must supply asset identifier' })
-      .end()
-  }
-  next()
-}
-
-module.exports = { getStorageAssets, removeStorageAsset, verifyIdentifier, uploadStorageAssets }
+app
+  .get('/api/assets/:storageId', getStorageById, getStorageAssets)
+  .post('/api/assets/:storageId', getStorageById, verifyIdentifier, upload.any(), uploadStorageAssets)
+  .put('/api/assets/:storageId', getStorageById, empty) // update metadata, not the actual asset buffer
+  .delete('/api/assets/:storageId', getStorageById, verifyIdentifier, removeStorageAsset)
