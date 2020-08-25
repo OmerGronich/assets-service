@@ -15,14 +15,14 @@ function getStorageAssets (req, res) {
 
 function uploadStorageAssets (req, res) {
   const kind = req.storage.kind
-  const identifier = req.query.identifier
   const file = req.files[0].buffer
+  const {identifier, prefix, extension} = req.query || {};
 
   if (kind === 'ftp') {
-    return uploadFile(req.storage, identifier, file)
+    return uploadFile(req.storage, {identifier, file, extension, prefix})
       .then((result) => res.status(200).json(result).end())
-      .catch(() => {
-        res.status(500).json({ message: 'cloud not upload asset'}).end()
+      .catch((error) => {
+        res.status(500).json({ message: error.message || 'could not upload asset'}).end()
       })
   } else {
     return res.end()
