@@ -3,7 +3,7 @@ const upload = require('multer')()
 const { getStorageById } = require('../controllers/storage')
 const { getStorageAssets, removeStorageAsset, verifyIdentifier, uploadStorageAssets } = require('../controllers/assets')
 
-function empty (_, res) {
+function empty(_, res) {
   return res.status(200).json({ message: 'endpoint not yet exists' }).end()
 }
 

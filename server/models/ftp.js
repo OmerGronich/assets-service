@@ -2,7 +2,7 @@ const Client = require('ftp')
 const { getSecret } = require('../../helpers/secrets-management')
 
 class Ftp {
-  constructor (storage) {
+  constructor(storage) {
     this.name = storage.name
     this.ready = getSecret(storage.tenant, storage.authentication)
       .then(decrypted => {
@@ -20,7 +20,7 @@ class Ftp {
       })
   }
 
-  list (path) {
+  list(path) {
     return new Promise((resolve, reject) => {
       this._client.list(path, (err, list) => {
         if (err) {
@@ -31,7 +31,7 @@ class Ftp {
     })
   }
 
-  upload (path, file) {
+  upload(path, file) {
     return new Promise((resolve, reject) => {
       this._client.append(file, path, false, (err) => {
         if (err) {
@@ -42,7 +42,7 @@ class Ftp {
     })
   }
 
-  remove (path) {
+  remove(path) {
     const pathArr = path.split('/')
     const currentItemToRemove = pathArr[pathArr.length - 1]
 
@@ -67,7 +67,7 @@ class Ftp {
       })
   }
 
-  destroy () {
+  destroy() {
     this._client.destroy()
   }
 }

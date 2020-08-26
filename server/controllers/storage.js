@@ -2,7 +2,7 @@ const Storage = require('../models/storage')
 const uniqid = require('uniqid')
 const { setSecret } = require('../../helpers/secrets-management')
 
-function createStorage (req, res) {
+function createStorage(req, res) {
   const body = req.body || {}
   const storage = new Storage({
     tenant: req.headers.tenant,
@@ -27,7 +27,7 @@ function createStorage (req, res) {
     })
 }
 
-function getStorageList (req, res) {
+function getStorageList(req, res) {
   return Storage.find({ tenant: req.headers.tenant })
     .select('kind name metadata')
     .lean()
@@ -40,13 +40,13 @@ function getStorageList (req, res) {
     .catch(() => res.status(400).json({ message: 'error loading storage list' }).end())
 }
 
-function removeStorage (req, res) {
+function removeStorage(req, res) {
   req.storage.remove()
     .then(() => res.status(200).json({}).end())
     .catch(() => res.status(400).json({ message: 'failed to remove storage' }).end())
 }
 
-function updateStorage (req, res) {
+function updateStorage(req, res) {
   const body = req.body || {}
   let promise = Promise.resolve()
   if (body.name && body.name !== req.storage.name) {
@@ -69,7 +69,7 @@ function updateStorage (req, res) {
     .catch(() => res.status(400).json({ message: 'failed to update storage' }).end())
 }
 
-function getStorageById (req, res, next) {
+function getStorageById(req, res, next) {
   return Storage.findOne({ _id: req.params.storageId, tenant: req.headers.tenant })
     .then(storage => {
       req.storage = storage
@@ -78,7 +78,7 @@ function getStorageById (req, res, next) {
     .catch(() => res.status(404).json({ message: 'could not find storage' }).end())
 }
 
-function getStorage (req, res) {
+function getStorage(req, res) {
   const { _id, name, kind, metadata } = req.storage
   res.status(200).json({ _id, name, kind, metadata }).end()
 }

@@ -9,3 +9,4 @@ dist/
 *.md
 node_modules
 .git/
+.idea
