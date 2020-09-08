@@ -1,8 +1,7 @@
 const path = require('path')
-const uniqid = require('uniqid')
 const Ftp = require('../models/ftp')
 
-async function loadFiles(storage, identifier = '/') {
+async function loadFiles (storage, identifier = '/') {
   const ftp = new Ftp(storage)
   const fullPath = path.join(storage.metadata.basePath || '/', identifier)
 
@@ -16,9 +15,9 @@ async function loadFiles(storage, identifier = '/') {
   return list
 }
 
-async function uploadFile(storage, { identifier, file, extension, prefix }) {
+async function uploadFile (storage, { identifier, file }) {
   const ftp = new Ftp(storage)
-  const fullPath = path.join(storage.metadata.basePath || '/', identifier, `${prefix}-${uniqid()}.${extension}`)
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier)
   try {
     await ftp.ready
     await ftp.upload(fullPath, file)
@@ -35,7 +34,7 @@ async function uploadFile(storage, { identifier, file, extension, prefix }) {
   return { success: true, publicUrl }
 }
 
-async function removeFile(storage, identifier) {
+async function removeFile (storage, identifier) {
   const ftp = new Ftp(storage)
   const fullPath = path.join(storage.metadata.basePath || '/', identifier)
 

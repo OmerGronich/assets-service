@@ -1,6 +1,6 @@
 {
   "name": "@greenpress/assets",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "author": "David Meir-Levy <davidmeirlevy@gmail.com>",
   "description": "manage assets like images and static files on remote servers",

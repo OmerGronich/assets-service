@@ -4,5 +4,6 @@ module.exports = {
   mongoUri: process.env.MONGO_URI || 'mongodb://localhost/assets-service',
   internalServicesSecret: process.env.INTERNAL_SECRET,
   secretsToken: process.env.SECRETS_TOKEN,
-  editorsRoles
+  editorsRoles,
+  tempFolder: process.cwd() + '/tmp'
 }
