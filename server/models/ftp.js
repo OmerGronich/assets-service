@@ -33,7 +33,7 @@ class Ftp {
 
   upload(path, file) {
     return new Promise((resolve, reject) => {
-      this._client.put(file, path, false, (err) => {
+      this._client.append(file, path, false, (err) => {
         if (err) {
           return reject({ message: 'could not upload asset to storage: ' + this.name })
         }
