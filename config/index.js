@@ -5,5 +5,4 @@ module.exports = {
   internalServicesSecret: process.env.INTERNAL_SECRET,
   secretsToken: process.env.SECRETS_TOKEN,
   editorsRoles,
-  tempFolder: process.cwd() + '/tmp'
 }

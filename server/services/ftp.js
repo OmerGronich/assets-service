@@ -1,4 +1,5 @@
 const path = require('path')
+const uniqid = require('uniqid')
 const Ftp = require('../models/ftp')
 
 async function loadFiles (storage, identifier = '/') {
@@ -15,21 +16,23 @@ async function loadFiles (storage, identifier = '/') {
   return list
 }
 
-async function uploadFile (storage, { identifier, file }) {
+async function uploadFile (storage, { identifier, file, extension, prefix }) {
   const ftp = new Ftp(storage)
-  const fullPath = path.join(storage.metadata.basePath || '/', identifier)
+  const filename = `${prefix}-${uniqid()}.${extension}`
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier, filename)
+
   try {
     await ftp.ready
     await ftp.upload(fullPath, file)
   } catch (e) {
     throw new Error('failed to upload asset to: ' + fullPath)
+  } finally {
+    // run on background
+    // TODO: reuse storage connection
+    ftp.destroy()
   }
 
-  // run on background
-  // TODO: reuse storage connection
-  ftp.destroy()
-
-  const publicUrl = new URL(identifier, storage.metadata.publicUrl)
+  const publicUrl = new URL(identifier + '/' + filename, storage.metadata.publicUrl)
 
   return { success: true, publicUrl }
 }
