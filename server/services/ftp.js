@@ -6,12 +6,17 @@ async function loadFiles (storage, identifier = '/') {
   const ftp = new Ftp(storage)
   const fullPath = path.join(storage.metadata.basePath || '/', identifier)
 
-  await ftp.ready
-  const list = await ftp.list(fullPath)
-
-  // run on background
-  // TODO: reuse storage connection
-  ftp.destroy()
+  let list
+  try {
+    await ftp.ready
+    list = await ftp.list(fullPath)
+  } catch (e) {
+    throw new Error(e.message || 'failed to get list of assets from: ' + fullPath)
+  } finally {
+    // run on background
+    // TODO: reuse storage connection
+    ftp.destroy()
+  }
 
   return list
 }
@@ -25,7 +30,7 @@ async function uploadFile (storage, { identifier, file, extension, prefix }) {
     await ftp.ready
     await ftp.upload(fullPath, file)
   } catch (e) {
-    throw new Error('failed to upload asset to: ' + fullPath)
+    throw new Error(e.message || 'failed to upload asset to: ' + fullPath)
   } finally {
     // run on background
     // TODO: reuse storage connection
@@ -41,12 +46,16 @@ async function removeFile (storage, identifier) {
   const ftp = new Ftp(storage)
   const fullPath = path.join(storage.metadata.basePath || '/', identifier)
 
-  await ftp.ready
-  await ftp.remove(fullPath)
-
-  // run on background
-  // TODO: reuse storage connection
-  ftp.destroy()
+  try {
+    await ftp.ready
+    await ftp.remove(fullPath)
+  } catch (e) {
+    throw new Error(e.message || 'failed to remove asset: ' + fullPath)
+  } finally {
+    // run on background
+    // TODO: reuse storage connection
+    ftp.destroy()
+  }
 
   return { success: true }
 }
