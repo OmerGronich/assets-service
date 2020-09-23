@@ -1,6 +1,7 @@
 const path = require('path')
 const uniqid = require('uniqid')
 const Ftp = require('../models/ftp')
+const { joinUrl } = require('./url')
 
 async function loadFiles (storage, identifier = '/') {
   const ftp = new Ftp(storage)
@@ -37,9 +38,7 @@ async function uploadFile (storage, { identifier, file, extension, prefix }) {
     ftp.destroy()
   }
 
-  const publicUrl = new URL(identifier + '/' + filename, storage.metadata.publicUrl)
-
-  return { success: true, publicUrl }
+  return { success: true, publicUrl: joinUrl(storage.metadata.publicUrl, path.join(identifier, filename)) }
 }
 
 async function removeFile (storage, identifier) {
