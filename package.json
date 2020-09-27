@@ -1,6 +1,6 @@
 {
   "name": "@greenpress/assets",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "license": "MIT",
   "author": "David Meir-Levy <davidmeirlevy@gmail.com>",
   "description": "manage assets like images and static files on remote servers",
@@ -23,7 +23,7 @@
     "greenpress-assets": "index.js"
   },
   "dependencies": {
-    "@greenpress/api-kit": "0.0.1",
+    "@greenpress/api-kit": "0.1.0",
     "ftp": "^0.3.10",
     "mongoose": "^5.10.5",
     "multer": "^1.4.2",
