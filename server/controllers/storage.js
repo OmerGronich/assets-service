@@ -72,6 +72,9 @@ function updateStorage(req, res) {
 function getStorageById(req, res, next) {
   return Storage.findOne({ _id: req.params.storageId, tenant: req.headers.tenant })
     .then(storage => {
+      if(!storage) {
+        throw new Error('storage not exists')
+      }
       req.storage = storage
       next()
     })
