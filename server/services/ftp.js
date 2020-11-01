@@ -1,7 +1,21 @@
 const path = require('path')
 const uniqid = require('uniqid')
+const ASSET_TYPES = require('../../helpers/asset-types.json')
 const Ftp = require('../models/ftp')
-const { joinUrl } = require('./url')
+const { joinUrl, isImage } = require('./url')
+
+const FTP_FILE_TYPES = {
+  '-': ASSET_TYPES.ASSET,
+  'd': ASSET_TYPES.DIRECTORY
+}
+
+function getAssetType (asset) {
+  const type = FTP_FILE_TYPES[asset.type] || ASSET_TYPES.ASSET
+  if (type === ASSET_TYPES.ASSET) {
+    return isImage(asset.name) ? ASSET_TYPES.IMAGE : ASSET_TYPES.ASSET
+  }
+  return type
+}
 
 async function loadFiles (storage, identifier = '/') {
   const ftp = new Ftp(storage)
@@ -19,7 +33,17 @@ async function loadFiles (storage, identifier = '/') {
     ftp.destroy()
   }
 
-  return list
+  return list.map(asset => {
+    const identifier = path.join(fullPath, asset.name)
+
+    return {
+      name: asset.name,
+      identifier,
+      updated: asset.date,
+      type: getAssetType(asset),
+      publicUrl: joinUrl(storage.metadata.publicUrl, identifier)
+    }
+  })
 }
 
 async function uploadFile (storage, { identifier, file, extension, prefix }) {
