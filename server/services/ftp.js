@@ -34,14 +34,14 @@ async function loadFiles (storage, identifier = '/') {
   }
 
   return list.map(asset => {
-    const identifier = path.join(fullPath, asset.name)
+    const fileIdentifier = path.join(identifier, asset.name)
 
     return {
       name: asset.name,
-      identifier,
+      identifier: fileIdentifier,
       updated: asset.date,
       type: getAssetType(asset),
-      publicUrl: joinUrl(storage.metadata.publicUrl, identifier)
+      publicUrl: joinUrl(storage.metadata.publicUrl, fileIdentifier)
     }
   })
 }
