@@ -1,0 +1,5 @@
+{
+    "": {
+        "comment": "An HTTP server to manage static assets on several assets providers"
+    }
+}

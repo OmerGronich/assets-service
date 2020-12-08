@@ -1,0 +1,129 @@
+{
+    "id": "YzhuRVOASYKq0YAOdjZ1",
+    "name": "Flow to retrieve FTP files list",
+    "dod": "-",
+    "description": "In this unit you will learn the flow of retrieving files from an FTP server.\nThis flow is similar to all other storage providers flows, such as S3, GCS, etc.",
+    "summary": "",
+    "hunksOrder": [
+        "server/routes/assets.js_0",
+        "server/controllers/assets.js_0",
+        "server/services/ftp.js_0"
+    ],
+    "tests": [],
+    "hints": [],
+    "play_mode": "walkthrough",
+    "swimmPatch": {
+        "server/routes/assets.js": {
+            "diffType": "MODIFIED",
+            "fileDiffHeader": "diff --git a/server/routes/assets.js b/server/routes/assets.js\nindex a835613..a835613 100644\n--- a/server/routes/assets.js\n+++ b/server/routes/assets.js",
+            "hunks": [
+                {
+                    "swimmHunkMetadata": {
+                        "hunkComments": [
+                            "In this step a user call the API to retrieve files from a storage"
+                        ]
+                    },
+                    "hunkDiffLines": [
+                        "@@ -8,7 +8,6 @@",
+                        " }",
+                        " ",
+                        " app",
+                        "-  .get('/api/assets/:storageId', getStorageById, getStorageAssets)",
+                        "   .post('/api/assets/:storageId', getStorageById, verifyIdentifier, upload.any(), uploadStorageAssets)",
+                        "   .put('/api/assets/:storageId', getStorageById, empty) // update metadata, not the actual asset buffer",
+                        "   .delete('/api/assets/:storageId', getStorageById, verifyIdentifier, removeStorageAsset)"
+                    ]
+                }
+            ]
+        },
+        "server/controllers/assets.js": {
+            "diffType": "MODIFIED",
+            "fileDiffHeader": "diff --git a/server/controllers/assets.js b/server/controllers/assets.js\nindex 939ac52..939ac52 100644\n--- a/server/controllers/assets.js\n+++ b/server/controllers/assets.js",
+            "hunks": [
+                {
+                    "swimmHunkMetadata": {
+                        "hunkComments": [
+                            "In this step we apply the relevant service according to the storage type (ftp / gcs / s3..).",
+                            "In this step we pass the storage and the identifier of the path, which the user wants to retrieve files from."
+                        ]
+                    },
+                    "hunkDiffLines": [
+                        "@@ -2,18 +2,6 @@",
+                        " const { loadFiles, removeFile, uploadFile } = require('../services/ftp')",
+                        " const { tempFolder } = require('../../config')",
+                        " ",
+                        "-function getStorageAssets (req, res) {",
+                        "-  const kind = req.storage.kind",
+                        "-  const identifier = req.query.identifier",
+                        "-",
+                        "-  if (kind === 'ftp') {",
+                        "-    return loadFiles(req.storage, identifier)",
+                        "-      .then(list => res.json(list).end())",
+                        "-      .catch(() => res.status(500).json({ message: 'could not get assets' }).end())",
+                        "-  } else {",
+                        "-    return res.end()",
+                        "-  }",
+                        "-}",
+                        " ",
+                        " function uploadStorageAssets (req, res) {",
+                        "   const kind = req.storage.kind"
+                    ]
+                }
+            ]
+        },
+        "server/services/ftp.js": {
+            "diffType": "MODIFIED",
+            "fileDiffHeader": "diff --git a/server/services/ftp.js b/server/services/ftp.js\nindex 3f31cd1..3f31cd1 100644\n--- a/server/services/ftp.js\n+++ b/server/services/ftp.js",
+            "hunks": [
+                {
+                    "swimmHunkMetadata": {
+                        "hunkComments": [
+                            "In this step we use the FTP model to connect the FTP Server, get the files list from the requested path (a.k.a identifier).",
+                            "In this step we map the files list from the FTP server to a more readable items list (name, identifier, updated, type, publicUrl)."
+                        ]
+                    },
+                    "hunkDiffLines": [
+                        "@@ -17,34 +17,6 @@",
+                        "   return type",
+                        " }",
+                        " ",
+                        "-async function loadFiles (storage, identifier = '/') {",
+                        "-  const ftp = new Ftp(storage)",
+                        "-  const fullPath = path.join(storage.metadata.basePath || '/', identifier)",
+                        "-",
+                        "-  let list",
+                        "-  try {",
+                        "-    await ftp.ready",
+                        "-    list = await ftp.list(fullPath)",
+                        "-  } catch (e) {",
+                        "-    throw new Error(e.message || 'failed to get list of assets from: ' + fullPath)",
+                        "-  } finally {",
+                        "-    // run on background",
+                        "-    // TODO: reuse storage connection",
+                        "-    ftp.destroy()",
+                        "-  }",
+                        "-",
+                        "-  return list.map(asset => {",
+                        "-    const fileIdentifier = path.join(identifier, asset.name)",
+                        "-",
+                        "-    return {",
+                        "-      name: asset.name,",
+                        "-      identifier: fileIdentifier,",
+                        "-      updated: asset.date,",
+                        "-      type: getAssetType(asset),",
+                        "-      publicUrl: joinUrl(storage.metadata.publicUrl, fileIdentifier)",
+                        "-    }",
+                        "-  })",
+                        "-}",
+                        " ",
+                        " async function uploadFile (storage, { identifier, file, extension, prefix }) {",
+                        "   const ftp = new Ftp(storage)"
+                    ]
+                }
+            ]
+        }
+    },
+    "app_version": "0.2.8",
+    "file_version": "1.0.4",
+    "last_commit_sha_for_swimm_patch": "18a969885dbe427271de98544e3844825d20d5ec"
+}
