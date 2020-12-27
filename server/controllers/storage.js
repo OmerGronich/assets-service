@@ -12,6 +12,7 @@ function createStorage(req, res) {
     authentication: uniqid()
   })
 
+
   return setSecret(storage.tenant, storage.authentication, body.authentication)
     .then(() => storage.save())
     .then((storage) => {
