@@ -6,18 +6,15 @@ class S3 {
     this.name = storage.name;
     this.ready = getSecret(storage.tenant, storage.authentication).then(
       (decrypted) => {
-        const auth = decrypted.value;
+        const { accessKeyId, secretAccessKey } = decrypted.value;
 
-        AWS.config.update({
-          accessKeyId: "<Access Key Here>",
-          secretAccessKey: "<Secret Access Key Here>"
+        AWS.config.setPromisesDependency();
+        this._client = new AWS.S3({
+          accessKeyId,
+          secretAccessKey
         });
+        this.bucket = { name: storage.metadata.bucketName };
 
-        this._client = new AWS.S3();
-        this.bucket = this._client.bucket(storage.metadata.bucketName);
-
-        console.log(this._client, 'this._client');
-        console.log(this.bucket, 'this.bucket');
       },
       () => {
         throw new Error('could not read AWS credentials');
@@ -26,11 +23,35 @@ class S3 {
   }
 
   async list(path) {
+    try {
+      const { Contents } = await this._client
+        .listObjectsV2({
+          Bucket: this.bucket.name,
+          Prefix: path.slice(1)
+        })
+        .promise();
 
+      return Contents;
+
+    } catch (error) {
+      throw { message: 'could not retrieve assets from storage: ' + this.name };
+    }
   }
 
   async upload(fullPath, file) {
+    try {
+      this._client
+        .upload({
+          Bucket: this.bucket.name,
+          Key: fullPath,
+          Body: file,
+          ContentType: file.type
+        })
+        .promise();
 
+    } catch (error) {
+      throw { message: 'could not upload asset to storage: ' + this.name };
+    }
   }
 
   async remove(file) {
