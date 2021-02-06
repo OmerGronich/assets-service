@@ -27,7 +27,7 @@ class S3 {
       const { Contents } = await this._client
         .listObjectsV2({
           Bucket: this.bucket.name,
-          Prefix: path.slice(1)
+          Prefix: path
         })
         .promise();
 
@@ -55,6 +55,56 @@ class S3 {
   }
 
   async remove(file) {
+    try {
+      const params = {
+        Bucket: this.bucket.name,
+        Prefix: file
+      };
+
+      const listedObjects = await this._client.listObjectsV2(params).promise();
+
+      if (listedObjects.Contents.length === 0) return;
+
+      const deleteParams = {
+        Bucket: this.bucket.name,
+        Delete: { Objects: [] }
+      };
+
+      listedObjects.Contents.forEach(({ Key }) => {
+        deleteParams.Delete.Objects.push({ Key });
+      });
+
+      await this._client.deleteObjects(deleteParams).promise();
+
+      if (listedObjects.IsTruncated) await this.remove(file);
+
+    } catch (error) {
+      throw { message: 'could not remove asset from storage: ' + file };
+    }
+  }
+
+  async rename(oldFile, newFileName) {
+    try {
+
+      await this._client
+        .copyObject({
+          Bucket: this.bucket.name,
+          CopySource: `/${this.bucket.name}${oldFile}`,
+          Key: newFileName
+        })
+        .promise();
+
+
+      this._client.deleteObject({
+          Bucket: this.bucket.name,
+          Key: oldFile
+        })
+        .promise();
+
+
+    } catch (e) {
+      throw { message: 'could not rename asset from storage: ' + oldFile };
+    }
   }
 
   async destroy() {
