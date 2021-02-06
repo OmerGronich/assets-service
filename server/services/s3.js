@@ -35,7 +35,7 @@ async function loadFiles(storage, identifier = '/') {
   let list;
   try {
     await s3.ready;
-    list = await s3.list("");
+    list = await s3.list(fullPath);
   } catch (e) {
     throw new Error(e.message || 'failed to get list of assets from: ' + fullPath);
   } finally {
@@ -46,19 +46,57 @@ async function loadFiles(storage, identifier = '/') {
 
   return list.map((asset) => {
     const fileIdentifier = path.join(identifier, asset.Key);
-
+    console.log(asset, 'asset');
     return {
       name: asset.Key,
       identifier: fileIdentifier,
       updated: asset.LastModified,
-      // @TODO get proper asset kind
+      // @TODO figure out how to get asset kind
       type: getAssetType({ name: asset.Key }),
       publicUrl: joinUrl(storage.metadata.publicUrl, fileIdentifier)
     };
   });
 }
 
+async function removeFile(storage, identifier) {
+  const s3 = new S3(storage);
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier);
+
+  try {
+    await s3.ready;
+    await s3.remove(fullPath);
+  } catch (e) {
+    throw new Error(e.message || 'failed to remove asset: ' + fullPath);
+  } finally {
+    // run on background
+    // TODO: reuse storage connection
+    s3.destroy();
+  }
+
+  return { success: true };
+}
+
+async function renameFile(storage, identifier, newFileName) {
+  const s3 = new S3(storage);
+  const fullPath = path.join(storage.metadata.basePath || '/', identifier);
+
+  try {
+    await s3.ready;
+    await s3.rename(fullPath, newFileName);
+  } catch (e) {
+    throw new Error(e.message || 'failed to remove asset: ' + fullPath);
+  } finally {
+    // run on background
+    // TODO: reuse storage connection
+    s3.destroy();
+  }
+
+  return { success: true };
+}
+
 module.exports = {
   uploadFile,
-  loadFiles
+  loadFiles,
+  removeFile,
+  renameFile
 };

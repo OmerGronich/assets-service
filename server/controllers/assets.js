@@ -54,6 +54,19 @@ function removeStorageAsset(req, res) {
     .catch(() => res.status(500).json({ message: 'could not remove asset' }).end());
 }
 
+function renameStorageAssets(req, res) {
+  const identifier = req.query.identifier;
+  const service = getService(req.storage);
+
+  if (!service) {
+    return res.end();
+  }
+
+  service.renameFile(req.storage, identifier, req.body.newFileName)
+    .then(() => res.end())
+    .catch(() => res.status(500).json({ message: 'could not rename asset' }).end());
+}
+
 function verifyIdentifier(req, res, next) {
   if (!req.query.identifier) {
     return res
@@ -64,4 +77,4 @@ function verifyIdentifier(req, res, next) {
   next();
 }
 
-module.exports = { getStorageAssets, removeStorageAsset, verifyIdentifier, uploadStorageAssets };
+module.exports = { getStorageAssets, removeStorageAsset, verifyIdentifier, uploadStorageAssets, renameStorageAssets };
