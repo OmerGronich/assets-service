@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
 const { getSecret } = require("../../helpers/secrets-management");
 
+AWS.config.setPromisesDependency();
+
 class S3 {
   constructor(storage) {
     this.name = storage.name;
@@ -8,7 +10,6 @@ class S3 {
       (decrypted) => {
         const { accessKeyId, secretAccessKey } = decrypted.value;
 
-        AWS.config.setPromisesDependency();
         this._client = new AWS.S3({
           accessKeyId,
           secretAccessKey
