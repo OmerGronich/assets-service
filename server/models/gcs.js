@@ -1,5 +1,5 @@
-const { Storage } = require('@google-cloud/storage');
-const { getSecret } = require('../../helpers/secrets-management');
+const { Storage } = require('@google-cloud/storage')
+const { getSecret } = require('../../helpers/secrets-management')
 
 class Gcs {
   constructor(storage) {
@@ -24,14 +24,38 @@ class Gcs {
   }
 
   async list(path) {
-    try {
-      const [files] = await this.bucket.getFiles({
-        prefix: path.slice(1)
-      });
-      return files;
-    } catch (error) {
-      throw { message: 'could not retrieve assets from storage: ' + this.name };
-    }
+    return new Promise((resolve, reject) => {
+      const filesAndFolders = [];
+
+      let cb = (err, files, next, apiResponse) => {
+        if (err) {
+          return reject({ message: 'could not retrieve assets from storage: ' + this.name });
+        }
+
+        const folders = apiResponse.prefixes.map(prefix => ({
+          metadata: {
+            name: prefix,
+            kind: ASSET_TYPES.DIRECTORY
+          }
+        }));
+
+        filesAndFolders.push(...files, ...folders);
+
+        if (!!next) {
+          this.bucket.getFiles(next, cb);
+        } else {
+          resolve(filesAndFolders);
+        }
+      };
+
+      this.bucket
+        .getFiles({
+          prefix: path.slice(1),
+          delimiter: '/',
+          autoPaginate: false
+        }, cb);
+
+    });
   }
 
   /**
