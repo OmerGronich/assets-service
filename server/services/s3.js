@@ -77,21 +77,6 @@ async function removeFile(storage, identifier) {
 }
 
 async function renameFile(storage, identifier, newFileName) {
-  const s3 = new S3(storage);
-  const fullPath = path.join(storage.metadata.basePath || '/', identifier);
-
-  try {
-    await s3.ready;
-    await s3.rename(fullPath, newFileName);
-  } catch (e) {
-    throw new Error(e.message || 'failed to remove asset: ' + fullPath);
-  } finally {
-    // run on background
-    // TODO: reuse storage connection
-    s3.destroy();
-  }
-
-  return { success: true };
 }
 
 module.exports = {

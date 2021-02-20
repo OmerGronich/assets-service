@@ -105,28 +105,8 @@ class S3 {
     }
   }
 
-  async rename(oldFile, newFileName) {
-    try {
-
-      await this._client
-        .copyObject({
-          Bucket: this.bucket.name,
-          CopySource: `/${this.bucket.name}${oldFile}`,
-          Key: newFileName
-        })
-        .promise();
-
-
-      this._client.deleteObject({
-          Bucket: this.bucket.name,
-          Key: oldFile
-        })
-        .promise();
-
-
-    } catch (e) {
-      throw { message: 'could not rename asset from storage: ' + oldFile };
-    }
+  async rename(oldFile, newFile) {
+    
   }
 
   async destroy() {
