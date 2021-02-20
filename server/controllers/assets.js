@@ -28,6 +28,7 @@ function getStorageAssets(req, res) {
 
 function uploadStorageAssets(req, res) {
   const file = req.files[0].buffer;
+  const type = req.files[0].mimetype;
   const { identifier, extension, prefix } = req.query || {};
   const service = getService(req.storage);
 
@@ -35,7 +36,7 @@ function uploadStorageAssets(req, res) {
     return res.end();
   }
 
-  service.uploadFile(req.storage, { identifier, file, extension, prefix })
+  service.uploadFile(req.storage, { identifier, file, extension, prefix, type })
     .then((result) => res.status(200).json(result).end())
     .catch((error) => {
       res.status(500).json({ message: error.message || 'could not upload asset' }).end();

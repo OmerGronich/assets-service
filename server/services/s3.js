@@ -5,18 +5,18 @@ const ASSET_TYPES = require('../../helpers/asset-types.json');
 const { joinUrl, isImage } = require('./url');
 
 
-function getAssetType(metadata) {
-  return isImage(metadata.name) ? ASSET_TYPES.IMAGE : metadata.kind;
+function getAssetType(asset) {
+  return isImage(asset.Key) ? ASSET_TYPES.IMAGE : asset.metadata.ContentType;
 }
 
-async function uploadFile(storage, { identifier, file, extension, prefix }) {
+async function uploadFile(storage, { identifier, file, extension, prefix, type }) {
   const s3 = new S3(storage);
   const filename = `${prefix}-${uniqid()}.${extension}`;
   const fullPath = path.join(storage.metadata.basePath || '/', identifier, filename);
 
   try {
     await s3.ready;
-    await s3.upload(fullPath, file);
+    await s3.upload(fullPath, { buffer: file, type });
   } catch (e) {
     throw new Error(e.message || 'failed to upload asset to: ' + fullPath);
   } finally {
@@ -29,6 +29,7 @@ async function uploadFile(storage, { identifier, file, extension, prefix }) {
 }
 
 async function loadFiles(storage, identifier = '/') {
+
   const s3 = new S3(storage);
   const fullPath = path.join(storage.metadata.basePath || '/', identifier);
 
@@ -46,13 +47,12 @@ async function loadFiles(storage, identifier = '/') {
 
   return list.map((asset) => {
     const fileIdentifier = path.join(identifier, asset.Key);
-    console.log(asset, 'asset');
+
     return {
       name: asset.Key,
       identifier: fileIdentifier,
       updated: asset.LastModified,
-      // @TODO figure out how to get asset kind
-      type: getAssetType({ name: asset.Key }),
+      type: getAssetType(asset),
       publicUrl: joinUrl(storage.metadata.publicUrl, fileIdentifier)
     };
   });

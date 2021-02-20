@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const { getSecret } = require("../../helpers/secrets-management");
+const ASSET_TYPES = require('../../helpers/asset-types.json');
 
 AWS.config.setPromisesDependency();
 
@@ -25,14 +26,33 @@ class S3 {
 
   async list(path) {
     try {
-      const { Contents } = await this._client
+      const listedObjects = await this._client
         .listObjectsV2({
           Bucket: this.bucket.name,
-          Prefix: path
+          Prefix: path,
+          Delimiter: "/"
         })
         .promise();
 
-      return Contents;
+      const headParams = {
+        Bucket: this.bucket.name
+      };
+
+      const files = await Promise.all(listedObjects.Contents.map(async content => {
+        headParams["Key"] = content.Key;
+        const metadata = await this._client.headObject(headParams).promise();
+
+        return { ...content, metadata };
+      }));
+
+      const folders = listedObjects.CommonPrefixes.map(({ Prefix }) => ({
+        Key: Prefix,
+        metadata: {
+          ContentType: ASSET_TYPES.DIRECTORY
+        }
+      }));
+
+      return [...files, ...folders];
 
     } catch (error) {
       throw { message: 'could not retrieve assets from storage: ' + this.name };
@@ -45,7 +65,7 @@ class S3 {
         .upload({
           Bucket: this.bucket.name,
           Key: fullPath,
-          Body: file,
+          Body: file.buffer,
           ContentType: file.type
         })
         .promise();
@@ -59,7 +79,8 @@ class S3 {
     try {
       const params = {
         Bucket: this.bucket.name,
-        Prefix: file
+        Prefix: file,
+        Delimiter: "/"
       };
 
       const listedObjects = await this._client.listObjectsV2(params).promise();
