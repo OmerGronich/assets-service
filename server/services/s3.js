@@ -19,10 +19,6 @@ async function uploadFile(storage, { identifier, file, extension, prefix, type }
     await s3.upload(fullPath, { buffer: file, type });
   } catch (e) {
     throw new Error(e.message || 'failed to upload asset to: ' + fullPath);
-  } finally {
-    // run on background
-    // TODO: reuse storage connection
-    s3.destroy();
   }
 
   return { success: true, publicUrl: joinUrl(storage.metadata.publicUrl, path.join(identifier, filename)) };
@@ -39,10 +35,6 @@ async function loadFiles(storage, identifier = '/') {
     list = await s3.list(fullPath);
   } catch (e) {
     throw new Error(e.message || 'failed to get list of assets from: ' + fullPath);
-  } finally {
-    // run on background
-    // TODO: reuse storage connection
-    s3.destroy();
   }
 
   return list.map((asset) => {
@@ -67,10 +59,6 @@ async function removeFile(storage, identifier) {
     await s3.remove(fullPath);
   } catch (e) {
     throw new Error(e.message || 'failed to remove asset: ' + fullPath);
-  } finally {
-    // run on background
-    // TODO: reuse storage connection
-    s3.destroy();
   }
 
   return { success: true };

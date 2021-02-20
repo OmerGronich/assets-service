@@ -106,10 +106,6 @@ class S3 {
   }
 
   async rename(oldFile, newFile) {
-    
-  }
-
-  async destroy() {
 
   }
 }
