@@ -42,13 +42,20 @@ class S3 {
         headParams["Key"] = content.Key;
         const metadata = await this._client.headObject(headParams).promise();
 
-        return { ...content, metadata };
+        return {
+          ...content,
+          metadata: {
+            ...metadata,
+            name: content.Key,
+            kind: metadata.ContentType
+          }
+        };
       }));
 
       const folders = listedObjects.CommonPrefixes.map(({ Prefix }) => ({
-        Key: Prefix,
         metadata: {
-          ContentType: ASSET_TYPES.DIRECTORY
+          name: Prefix,
+          kind: ASSET_TYPES.DIRECTORY
         }
       }));
 

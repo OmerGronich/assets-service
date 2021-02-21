@@ -1,13 +1,8 @@
 const S3 = require("../models/s3");
 const uniqid = require('uniqid');
 const path = require('path');
-const ASSET_TYPES = require('../../helpers/asset-types.json');
-const { joinUrl, isImage } = require('./url');
-
-
-function getAssetType(asset) {
-  return isImage(asset.Key) ? ASSET_TYPES.IMAGE : asset.metadata.ContentType;
-}
+const { getAssetType } = require("./get-asset-type");
+const { joinUrl } = require('./url');
 
 async function uploadFile(storage, { identifier, file, extension, prefix, type }) {
   const s3 = new S3(storage);
@@ -38,13 +33,13 @@ async function loadFiles(storage, identifier = '/') {
   }
 
   return list.map((asset) => {
-    const fileIdentifier = path.join(identifier, asset.Key);
+    const fileIdentifier = path.join(identifier, asset.metadata.name);
 
     return {
-      name: asset.Key,
+      name: asset.metadata.name,
       identifier: fileIdentifier,
       updated: asset.LastModified,
-      type: getAssetType(asset),
+      type: getAssetType(asset.metadata),
       publicUrl: joinUrl(storage.metadata.publicUrl, fileIdentifier)
     };
   });
