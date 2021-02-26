@@ -26,6 +26,7 @@ class S3 {
 
   async list(path) {
     try {
+
       const listedObjects = await this._client
         .listObjectsV2({
           Bucket: this.bucket.name,
@@ -34,7 +35,7 @@ class S3 {
         })
         .promise();
 
-      const files = listedObjects.Contents.map(async content => ({
+      const files = listedObjects.Contents.map(content => ({
         ...content,
         metadata: {
           name: content.Key,
@@ -85,13 +86,9 @@ class S3 {
 
       const deleteParams = {
         Bucket: this.bucket.name,
-        Delete: { Objects: [] }
+        Delete: { Objects: listedObjects.Contents.map(({ Key }) => ({ Key })) }
       };
-
-      listedObjects.Contents.forEach(({ Key }) => {
-        deleteParams.Delete.Objects.push({ Key });
-      });
-
+      
       await this._client.deleteObjects(deleteParams).promise();
 
       if (listedObjects.IsTruncated) await this.remove(file);
