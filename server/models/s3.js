@@ -34,22 +34,11 @@ class S3 {
         })
         .promise();
 
-      const headParams = {
-        Bucket: this.bucket.name
-      };
-
-      const files = await Promise.all(listedObjects.Contents.map(async content => {
-        headParams["Key"] = content.Key;
-        const metadata = await this._client.headObject(headParams).promise();
-
-        return {
-          ...content,
-          metadata: {
-            ...metadata,
-            name: content.Key,
-            kind: metadata.ContentType
-          }
-        };
+      const files = listedObjects.Contents.map(async content => ({
+        ...content,
+        metadata: {
+          name: content.Key,
+        }
       }));
 
       const folders = listedObjects.CommonPrefixes.map(({ Prefix }) => ({

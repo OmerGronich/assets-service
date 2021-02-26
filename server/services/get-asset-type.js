@@ -11,7 +11,7 @@ function getAssetType(metadata) {
     return ASSET_TYPES.ASSET;
   }
 
-  return metadata.kind;
+  return ASSET_TYPES.DIRECTORY;
 };
 
 module.exports = { getAssetType };
