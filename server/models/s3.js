@@ -59,7 +59,7 @@ class S3 {
         }
       }));
 
-      return [...files, ...folders];
+      return [...folders, ...files];
 
     } catch (error) {
       throw { message: 'could not retrieve assets from storage: ' + this.name };
