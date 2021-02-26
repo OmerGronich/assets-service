@@ -1,5 +1,7 @@
-const { Storage } = require('@google-cloud/storage')
-const { getSecret } = require('../../helpers/secrets-management')
+const { Storage } = require('@google-cloud/storage');
+const { getSecret } = require('../../helpers/secrets-management');
+const ASSET_TYPES = require('../../helpers/asset-types.json');
+
 
 class Gcs {
   constructor(storage) {
