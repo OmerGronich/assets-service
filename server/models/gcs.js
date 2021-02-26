@@ -39,7 +39,7 @@ class Gcs {
           }
         }));
 
-        filesAndFolders.push(...files, ...folders);
+        filesAndFolders.push(...folders, ...files);
 
         if (!!next) {
           this.bucket.getFiles(next, cb);
